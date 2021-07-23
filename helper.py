@@ -112,10 +112,10 @@ def make_args():
     #   Exploration parameter
     parser.add_argument('--Ne', dest="Ne", type=int, default=40,
                         help='Parameter to help with next state exploration; set by default as Ne=40')
-    #   Parameter to calculate learning ragte
+    #   Parameter to calculate learning rate
     parser.add_argument('--LPC', dest="LPC", type=int, default=40,
                         help='Parameter to determine learning parameter during reinforcement learning; by default LPC=40')
-    #   Parameter to calculate learning rage
+    #   Parameter to calculate learning rate
     parser.add_argument('--gamma', dest="gamma", type=float, default=0.7,
                         help='Parameter used in reinforcement learning; by default gamma=0.7')
     #   Starting X position of snake
@@ -128,7 +128,7 @@ def make_args():
     parser.add_argument('--INIT_FOOD_X', dest="food_x", type=int, default=120,
                         help='Initial X coordinate position of the food; by default food_x=120')
     #   starting Y position of food
-    parser.add_argument('--INIT_FOOD_Y', dest="food_y", type=int, default=120,
+    parser.add_argument('--INIT_FOOD_Y', dest="food_y", type=int, default=300,
                         help='Initial Y coordinate position of the food; by default food_y=120')
     #   Parse everything mentnoned above into args
     args = parser.parse_args()

@@ -59,12 +59,49 @@ class SnakeAgent:
     #   This can return a list of variables that help you keep track of
     #   conditions mentioned above.
     def helper_func(self, state):
-        print("IN helper_func")
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
+        print(f"IN helper_func.")
+        snake_x, snake_y, body, food_x, food_y = state
+        diff_x = snake_x - food_x
+        diff_y = snake_y - food_y
+        food_dir_x, food_dir_y = 1, 1
+
+        if diff_x < 0:
+            food_dir_x = 0
+        elif diff_x > 0:
+            food_dir_x = 2
+        
+        if diff_y < 0:
+            food_dir_y = 0
+        elif diff_y > 0:
+            food_dir_y = 2
+        
+        adj_wall_x, adj_wall_y = 1, 1
+        if snake_x == helper.BOARD_LIMIT_MIN + helper.GRID_SIZE:
+            adj_wall_x = 0
+        elif snake_x == helper.BOARD_LIMIT_MAX - helper.GRID_SIZE:
+            adj_wall_x = 2
+        
+        if snake_y == helper.BOARD_LIMIT_MIN + helper.GRID_SIZE:
+            adj_wall_y = 0
+        elif snake_y == helper.BOARD_LIMIT_MAX - helper.GRID_SIZE:
+            adj_wall_y = 2
+
+        adj_top, adj_bot, adj_left, adj_right = 0, 0, 0, 0
+        for b in body:
+            if b[0] == snake_x - helper.GRID_SIZE:
+                adj_left = 1
+            elif b[0] == snake_x + helper.GRID_SIZE:
+                adj_right = 1
+
+            # Note that in graphis it's normally quadrant IV
+            if b[1] == snake_y + helper.GRID_SIZE:
+                adj_bot = 1
+            elif b[1] == snake_y - helper.GRID_SIZE:
+                adj_top = 1
+
+        # actions = self.Q[adj_wall_x, adj_wall_y, food_dir_x, food_dir_y, adj_top, adj_bot, adj_left, adj_right, :]
+        return (adj_wall_x, adj_wall_y, food_dir_x, food_dir_y, adj_top, adj_bot, adj_left, adj_right)
+
 
 
     # Computing the reward, need not be changed.
@@ -97,8 +134,7 @@ class SnakeAgent:
     #   The parameters defined should be enough. If you want to describe more elaborate
     #   states as mentioned in helper_func, use the state variable to contain all that.
     def agent_action(self, state, points, dead):
-        print(f"IN AGENT_ACTION. state = {state}")
-        self.helper_func(state)
+        print(f"IN AGENT_ACTION")
         # YOUR CODE HERE
         # YOUR CODE HERE
         # YOUR CODE HERE
@@ -106,6 +142,15 @@ class SnakeAgent:
         # YOUR CODE HERE
         # YOUR CODE HERE
         # YOUR CODE HERE
+        wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right = self.helper_func(state)
+        action = np.argmax(self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, :])
+        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, action]
+        sample = 0
+
+        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, action] = (1 - 0.7) * qval_old + 0.7 * sample
+
+        new_x_pos, new_x_neg = state[0] + helper.GRID_SIZE, state[0] - helper.GRID_SIZE
+        new_y_pos, new_y_neg = state[0] - helper.GRID_SIZE, state[0] + helper.GRID_SIZE
 
         #UNCOMMENT THIS TO RETURN THE REQUIRED ACTION.
-        #return action
+        return action
