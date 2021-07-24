@@ -33,7 +33,7 @@ class SnakeGame:
         self.do_testing()
         self.show_games()
 
-    #   This is the function that does calls the functions to do reinforcement training
+    #   This is the function that calls the functions to do reinforcement training
     #       as many times as specified. It also prints the statistics based on the 
     #       parameter specfiied 
     def do_training(self):

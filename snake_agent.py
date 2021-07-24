@@ -1,6 +1,7 @@
 import numpy as np
 import helper
 import random
+import math
 
 #   This class has all the functions and variables necessary to implement snake game
 #   We will be using Q learning to do this
@@ -102,13 +103,18 @@ class SnakeAgent:
         return (adj_wall_x, adj_wall_y, food_dir_x, food_dir_y, adj_top, adj_bot, adj_left, adj_right)
 
     # Computing the reward, need not be changed.
-    def compute_reward(self, points, dead):
+    def compute_reward(self, points, dead, toward_food = False):
         if dead:
             return -1
         elif points > self.points:
             return 1
+        elif toward_food:
+            return 0.5
         else:
             return -0.1
+
+    # def update_body(self, body):
+        # for i, part in enumerate(body):
 
     #   This is the code you need to write. 
     #   This is the reinforcement learning agent
@@ -132,22 +138,18 @@ class SnakeAgent:
     #   states as mentioned in helper_func, use the state variable to contain all that.
     def agent_action(self, state, points, dead):
         # print(f"IN AGENT_ACTION")
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
-        # YOUR CODE HERE
         wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right = self.helper_func(state)
         rewards = np.array([float(self.points) for _ in self.actions])
         samples = np.array([-float('inf')] * len(self.actions))
+        means = np.array([-float('inf')] * len(self.actions))
 
         for i in self.actions:
             self.N = self.Q.copy()
             nval_old = self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i]
             successor = state.copy()
+            successor[2] = state[2].copy()
             successor[2].append((state[0], state[1]))
+            # successor[2].pop(0)
 
             if i == 0:
                 successor[1] -= helper.GRID_SIZE
@@ -170,20 +172,26 @@ class SnakeAgent:
                 successor[1] > helper.BOARD_LIMIT_MAX:
                 successor_dead = True
             
-            # print(f'i = {i}, dead = {successor_dead}')
-            rewards[i] = samples[i] = self.compute_reward(successor_points, successor_dead)
+            x1, y1 = state[0] - state[3], state[1] - state[4]
+            x2, y2 = successor[0] - successor[3], successor[1] - successor[4]
+            d1, d2 = math.sqrt(x1 ** 2 + y1 ** 2), math.sqrt(x2 ** 2 + y2 ** 2)
+            towards_food = d2 < d1 
+
+            rewards[i] = samples[i] = self.compute_reward(successor_points, successor_dead, toward_food = towards_food)
             if not successor_dead:
                 wx1, wy1, fdx1, fdy1, t1, b1, l1, r1 = self.helper_func(successor)
                 nval_old = self.N[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, i]
                 succ_max = np.max(self.Q[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, :])
                 samples[i] += self.gamma * succ_max
+                means[i] = np.mean(self.Q[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, :])
             
             self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i] = (1 - 0.7) * nval_old + 0.7 * samples[i]
         
         max_sample, max_action = np.max(samples), np.argmax(samples)
-        print(f'rewards = {rewards}, samples = {samples}, max_sample = {max_sample}, max_action = {max_action}')
-        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action]
-        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action] = (1 - 0.7) * qval_old + 0.7 * max_sample
+        max_mean, ma = np.max(means), np.argmax(means)
+        # print(f'rewards = {rewards}, samples = {samples}, max_sample = {max_sample}, max_action = {max_action}, means = {means}, max_mean = {max_mean}, ma = {ma}')
+        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, ma]
+        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, ma] = (1 - 0.7) * qval_old + 0.7 * samples[ma]
 
         new_x_pos, new_x_neg = state[0] + helper.GRID_SIZE, state[0] - helper.GRID_SIZE
         new_y_pos, new_y_neg = state[0] - helper.GRID_SIZE, state[0] + helper.GRID_SIZE
