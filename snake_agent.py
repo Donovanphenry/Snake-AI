@@ -59,7 +59,7 @@ class SnakeAgent:
     #   This can return a list of variables that help you keep track of
     #   conditions mentioned above.
     def helper_func(self, state):
-        print(f"IN helper_func.")
+        # print(f"IN helper_func.")
         snake_x, snake_y, body, food_x, food_y = state
         diff_x = snake_x - food_x
         diff_y = snake_y - food_y
@@ -131,7 +131,7 @@ class SnakeAgent:
     #   The parameters defined should be enough. If you want to describe more elaborate
     #   states as mentioned in helper_func, use the state variable to contain all that.
     def agent_action(self, state, points, dead):
-        print(f"IN AGENT_ACTION")
+        # print(f"IN AGENT_ACTION")
         # YOUR CODE HERE
         # YOUR CODE HERE
         # YOUR CODE HERE
@@ -140,8 +140,6 @@ class SnakeAgent:
         # YOUR CODE HERE
         # YOUR CODE HERE
         wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right = self.helper_func(state)
-        t = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, :]
-        action = np.argmax(self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, :])
         rewards = np.array([float(self.points) for _ in self.actions])
         samples = np.array([-float('inf')] * len(self.actions))
 
@@ -172,7 +170,7 @@ class SnakeAgent:
                 successor[1] > helper.BOARD_LIMIT_MAX:
                 successor_dead = True
             
-            print(f'i = {i}, dead = {successor_dead}')
+            # print(f'i = {i}, dead = {successor_dead}')
             rewards[i] = samples[i] = self.compute_reward(successor_points, successor_dead)
             if not successor_dead:
                 wx1, wy1, fdx1, fdy1, t1, b1, l1, r1 = self.helper_func(successor)
@@ -185,7 +183,7 @@ class SnakeAgent:
         max_sample, max_action = np.max(samples), np.argmax(samples)
         print(f'rewards = {rewards}, samples = {samples}, max_sample = {max_sample}, max_action = {max_action}')
         qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action]
-        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, action] = (1 - 0.7) * qval_old + 0.7 * max_sample
+        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action] = (1 - 0.7) * qval_old + 0.7 * max_sample
 
         new_x_pos, new_x_neg = state[0] + helper.GRID_SIZE, state[0] - helper.GRID_SIZE
         new_y_pos, new_y_neg = state[0] - helper.GRID_SIZE, state[0] + helper.GRID_SIZE
