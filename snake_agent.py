@@ -87,22 +87,19 @@ class SnakeAgent:
             adj_wall_y = 2
 
         adj_top, adj_bot, adj_left, adj_right = 0, 0, 0, 0
-        for b in body:
-            if b[0] == snake_x - helper.GRID_SIZE:
+        for body_part in body:
+            if body_part[0] == snake_x - helper.GRID_SIZE:
                 adj_left = 1
-            elif b[0] == snake_x + helper.GRID_SIZE:
+            elif body_part[0] == snake_x + helper.GRID_SIZE:
                 adj_right = 1
 
             # Note that in graphis it's normally quadrant IV
-            if b[1] == snake_y + helper.GRID_SIZE:
+            if body_part[1] == snake_y + helper.GRID_SIZE:
                 adj_bot = 1
-            elif b[1] == snake_y - helper.GRID_SIZE:
+            elif body_part[1] == snake_y - helper.GRID_SIZE:
                 adj_top = 1
 
-        # actions = self.Q[adj_wall_x, adj_wall_y, food_dir_x, food_dir_y, adj_top, adj_bot, adj_left, adj_right, :]
         return (adj_wall_x, adj_wall_y, food_dir_x, food_dir_y, adj_top, adj_bot, adj_left, adj_right)
-
-
 
     # Computing the reward, need not be changed.
     def compute_reward(self, points, dead):
@@ -143,14 +140,55 @@ class SnakeAgent:
         # YOUR CODE HERE
         # YOUR CODE HERE
         wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right = self.helper_func(state)
+        t = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, :]
         action = np.argmax(self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, :])
-        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, action]
-        sample = 0
+        rewards = np.array([float(self.points) for _ in self.actions])
+        samples = np.array([-float('inf')] * len(self.actions))
 
-        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, action] = (1 - 0.7) * qval_old + 0.7 * sample
+        for i in self.actions:
+            self.N = self.Q.copy()
+            nval_old = self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i]
+            successor = state.copy()
+            successor[2].append((state[0], state[1]))
+
+            if i == 0:
+                successor[1] -= helper.GRID_SIZE
+            elif i == 1:
+                successor[1] += helper.GRID_SIZE
+            elif i == 2:
+                successor[0] -= helper.GRID_SIZE
+            else:
+                successor[0] += helper.GRID_SIZE
+            
+            successor_points, successor_dead = self.points, dead
+            
+            if (successor[0], successor[1]) == (successor[3], successor[4]):
+                successor_points += 1
+
+            if (successor[0], successor[1]) in successor[2] or\
+                successor[0] < helper.BOARD_LIMIT_MIN or\
+                successor[0] > helper.BOARD_LIMIT_MAX or\
+                successor[1] < helper.BOARD_LIMIT_MIN or\
+                successor[1] > helper.BOARD_LIMIT_MAX:
+                successor_dead = True
+            
+            print(f'i = {i}, dead = {successor_dead}')
+            rewards[i] = samples[i] = self.compute_reward(successor_points, successor_dead)
+            if not successor_dead:
+                wx1, wy1, fdx1, fdy1, t1, b1, l1, r1 = self.helper_func(successor)
+                nval_old = self.N[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, i]
+                succ_max = np.max(self.Q[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, :])
+                samples[i] += self.gamma * succ_max
+            
+            self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i] = (1 - 0.7) * nval_old + 0.7 * samples[i]
+        
+        max_sample, max_action = np.max(samples), np.argmax(samples)
+        print(f'rewards = {rewards}, samples = {samples}, max_sample = {max_sample}, max_action = {max_action}')
+        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action]
+        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, action] = (1 - 0.7) * qval_old + 0.7 * max_sample
 
         new_x_pos, new_x_neg = state[0] + helper.GRID_SIZE, state[0] - helper.GRID_SIZE
         new_y_pos, new_y_neg = state[0] - helper.GRID_SIZE, state[0] + helper.GRID_SIZE
 
         #UNCOMMENT THIS TO RETURN THE REQUIRED ACTION.
-        return action
+        return max_action

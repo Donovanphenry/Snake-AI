@@ -128,7 +128,7 @@ def make_args():
     parser.add_argument('--INIT_FOOD_X', dest="food_x", type=int, default=120,
                         help='Initial X coordinate position of the food; by default food_x=120')
     #   starting Y position of food
-    parser.add_argument('--INIT_FOOD_Y', dest="food_y", type=int, default=300,
+    parser.add_argument('--INIT_FOOD_Y', dest="food_y", type=int, default=120,
                         help='Initial Y coordinate position of the food; by default food_y=120')
     #   Parse everything mentnoned above into args
     args = parser.parse_args()

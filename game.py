@@ -48,7 +48,7 @@ class SnakeGame:
         #   AS TRAINING IS HAPPENING THE CODE IN THE LOOP WILL PRINT STATISTICS.
         #   Use self.env.reset() to reset your game after each iteration.
         for game in range(1, self.args.NUM_TRAIN_ITER + 1):
-                print("TRAINING NUMBER : " + str(game))
+            print("TRAINING NUMBER : " + str(game))
             # YOUR CODE HERE
             # YOUR CODE HERE
             # YOUR CODE HERE
