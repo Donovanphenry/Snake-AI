@@ -109,7 +109,7 @@ class SnakeAgent:
         elif points > self.points:
             return 1
         elif toward_food:
-            return 0.5
+            return -0.05
         else:
             return -0.1
 
@@ -188,10 +188,10 @@ class SnakeAgent:
             self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i] = (1 - 0.7) * nval_old + 0.7 * samples[i]
         
         max_sample, max_action = np.max(samples), np.argmax(samples)
-        max_mean, ma = np.max(means), np.argmax(means)
+        max_act = np.argmax(means)
         # print(f'rewards = {rewards}, samples = {samples}, max_sample = {max_sample}, max_action = {max_action}, means = {means}, max_mean = {max_mean}, ma = {ma}')
-        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, ma]
-        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, ma] = (1 - 0.7) * qval_old + 0.7 * samples[ma]
+        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action]
+        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action] = (1 - 0.1) * qval_old + 0.1 * samples[max_action]
 
         new_x_pos, new_x_neg = state[0] + helper.GRID_SIZE, state[0] - helper.GRID_SIZE
         new_y_pos, new_y_neg = state[0] - helper.GRID_SIZE, state[0] + helper.GRID_SIZE

@@ -109,7 +109,7 @@ class SnakeGame:
         self.agent.set_eval()
         points_results = []
         end = False
-        for game in range(1, self.args.NUM_DISP_ITER + 1):
+        for game in range(1, self.args.NUM_DISP_ITER + 100):
             state = self.env.get_state()
             dead = False
             action = self.agent.agent_action(state, 0, dead)
