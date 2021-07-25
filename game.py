@@ -42,11 +42,7 @@ class SnakeGame:
         NUM_TO_STAT = self.args.NUM_TO_STAT
         self.points_results = []
         start = time.time()
-
-        # pygame.event.pump()
-        self.agent.set_eval()
-        # end = False
-        for game in range(1, 5000):
+        for game in range(1, self.args.NUM_TRAIN_ITER + 1):
             state = self.env.get_state()
             dead = False
             action = self.agent.agent_action(state, 0, dead)

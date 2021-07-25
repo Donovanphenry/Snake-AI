@@ -5,15 +5,12 @@ import argparse
 DISPLAY_SIZE = 560
 GRID_SIZE = 40
 WALL_SIZE = 40
-# DISPLAY_SIZE = 1040
-# GRID_SIZE = 40
-# WALL_SIZE = 40
 
 #   Here we define some variables for the snake size with respect to the board
 SNAKE_UNIT_SIZE = 40
 BOARD_LIMIT_MIN = 40
 BOARD_LIMIT_MAX = 480
-IN_WALL_COORD = 1000
+IN_WALL_COORD = 520
 
 #   Here we define some variables to help draw the board
 WHITE = (255, 255, 255)
@@ -46,7 +43,6 @@ food_y = 120
 
 #   Here we define a varibale to save the trained state.
 MODEL_SAVE_FILE = 'model.npy'
-
 
 #   Here we define a function that checks if the Q array we created is in the proper format
 #   It doesn't check the values in the array, rather it only checks if the array has the
