@@ -138,10 +138,13 @@ class SnakeAgent:
     #   states as mentioned in helper_func, use the state variable to contain all that.
     def agent_action(self, state, points, dead):
         # print(f"IN AGENT_ACTION")
+        if dead:
+            return None
+
+        self.points = points
         wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right = self.helper_func(state)
         rewards = np.array([float(self.points) for _ in self.actions])
         samples = np.array([-float('inf')] * len(self.actions))
-        means = np.array([-float('inf')] * len(self.actions))
 
         for i in self.actions:
             self.N = self.Q.copy()
@@ -149,7 +152,6 @@ class SnakeAgent:
             successor = state.copy()
             successor[2] = state[2].copy()
             successor[2].append((state[0], state[1]))
-            # successor[2].pop(0)
 
             if i == 0:
                 successor[1] -= helper.GRID_SIZE
@@ -160,7 +162,7 @@ class SnakeAgent:
             else:
                 successor[0] += helper.GRID_SIZE
             
-            successor_points, successor_dead = self.points, dead
+            successor_points, successor_dead = self.points, False
             
             if (successor[0], successor[1]) == (successor[3], successor[4]):
                 successor_points += 1
@@ -179,22 +181,18 @@ class SnakeAgent:
 
             rewards[i] = samples[i] = self.compute_reward(successor_points, successor_dead, toward_food = towards_food)
             if not successor_dead:
+                samples[i] = self.compute_reward(successor_points, successor_dead, toward_food = towards_food)
                 wx1, wy1, fdx1, fdy1, t1, b1, l1, r1 = self.helper_func(successor)
                 nval_old = self.N[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, i]
                 succ_max = np.max(self.Q[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, :])
                 samples[i] += self.gamma * succ_max
-                means[i] = np.mean(self.Q[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, :])
             
             self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i] = (1 - 0.7) * nval_old + 0.7 * samples[i]
         
-        max_sample, max_action = np.max(samples), np.argmax(samples)
-        max_act = np.argmax(means)
-        # print(f'rewards = {rewards}, samples = {samples}, max_sample = {max_sample}, max_action = {max_action}, means = {means}, max_mean = {max_mean}, ma = {ma}')
-        qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action]
-        self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action] = (1 - 0.1) * qval_old + 0.1 * samples[max_action]
+        max_action = np.argmax(samples)
 
-        new_x_pos, new_x_neg = state[0] + helper.GRID_SIZE, state[0] - helper.GRID_SIZE
-        new_y_pos, new_y_neg = state[0] - helper.GRID_SIZE, state[0] + helper.GRID_SIZE
+        if self._train:
+            qval_old = self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action]
+            self.Q[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, max_action] = (1 - 0.1) * qval_old + 0.1 * samples[max_action]
 
-        #UNCOMMENT THIS TO RETURN THE REQUIRED ACTION.
         return max_action

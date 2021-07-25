@@ -5,12 +5,15 @@ import argparse
 DISPLAY_SIZE = 560
 GRID_SIZE = 40
 WALL_SIZE = 40
+# DISPLAY_SIZE = 1040
+# GRID_SIZE = 40
+# WALL_SIZE = 40
 
 #   Here we define some variables for the snake size with respect to the board
 SNAKE_UNIT_SIZE = 40
 BOARD_LIMIT_MIN = 40
 BOARD_LIMIT_MAX = 480
-IN_WALL_COORD = 520
+IN_WALL_COORD = 1000
 
 #   Here we define some variables to help draw the board
 WHITE = (255, 255, 255)
@@ -34,7 +37,7 @@ NUM_ACTIONS = 4
 NUM_TRAIN_ITER = 5000
 NUM_TEST_ITER = 100
 NUM_DISP_ITER = 1
-NUM_TO_STAT = 100
+NUM_TO_STAT = 1000
 snake_head_x = 200
 snake_head_y = 200
 food_x = 120
