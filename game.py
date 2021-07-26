@@ -53,7 +53,7 @@ class SnakeGame:
                 action = self.agent.agent_action(state, points, dead)
             if game % self.args.NUM_TO_STAT == 0:
                print(
-                   "Played games:", len(self.points_results) - NUM_TO_STAT, "-", len(self.points_results), 
+                   "Played games:", len(self.points_results) - NUM_TO_STAT + 1, "-", len(self.points_results), 
                    "Calculated points (Average:", sum(self.points_results[-NUM_TO_STAT:])/NUM_TO_STAT,
                    "Max points so far:", max(self.points_results[-NUM_TO_STAT:]),
                    "Min points so far:", min(self.points_results[-NUM_TO_STAT:]),")",
