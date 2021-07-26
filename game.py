@@ -80,7 +80,6 @@ class SnakeGame:
         agent_best = SnakeAgent(env_best.get_actions(), self.args.Ne, self.args.LPC, self.args.gamma)
         agent_best.load_best_model()
         agent_best.set_eval()
-        print(f'agent_best.Q == None == {agent_best.Q == None}')
         points_results_best = []
 
         for _ in range(1, self.args.NUM_TEST_ITER + 1):
@@ -95,8 +94,7 @@ class SnakeGame:
             self.env.reset()
             points_results.append(points)
 
-            if agent_best.Q != None:
-                print('here')
+            if not agent_best.Q is None:
                 state_best = env_best.get_state()
                 dead_best = False
                 action_best = agent_best.agent_action(state_best, 0, dead_best)
@@ -116,9 +114,9 @@ class SnakeGame:
         print("Max Points:", max(points_results))
         print("Min Points:", min(points_results))
         print('---------------------------------')
-        avg_best = sum(points_results_best)/len(points_results_best) if agent_best.Q != None else -float('inf')
-        max_best = max(points_results_best)/len(points_results_best) if agent_best.Q != None else -float('inf')
-        min_best = min(points_results_best)/len(points_results_best) if agent_best.Q != None else -float('inf')
+        avg_best = sum(points_results_best)/len(points_results_best) if not agent_best.Q is None else -float('inf')
+        max_best = max(points_results_best) if not agent_best.Q is None else -float('inf')
+        min_best = min(points_results_best) if not agent_best.Q is None else -float('inf')
         print("Average Points Best:", avg_best)
         print("Max Points Best:", max_best)
         print("Min Points Best:", min_best)
