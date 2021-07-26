@@ -1,7 +1,6 @@
 import numpy as np
 import helper
 import random
-import math
 
 #   This class has all the functions and variables necessary to implement snake game
 #   We will be using Q learning to do this
@@ -150,7 +149,7 @@ class SnakeAgent:
         wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right = self.helper_func(state)
         samples = np.array([-float('inf')] * len(self.actions))
         future = np.array([-float('inf')] * len(self.actions))
-        alpha = .7
+        alpha = .6
 
         for i in self.actions:
             self.N = self.Q.copy()

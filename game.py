@@ -132,6 +132,7 @@ class SnakeGame:
         print("Display Games")
         self.env.display()
         pygame.event.pump()
+        self.agent.load_best_model()
         self.agent.set_eval()
         points_results = []
         end = False
