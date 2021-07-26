@@ -82,7 +82,9 @@ class SnakeGame:
         agent_best.set_eval()
         points_results_best = []
 
-        for _ in range(1, self.args.NUM_TEST_ITER + 1):
+        feedback = self.args.NUM_TEST_ITER // 5
+
+        for i in range(1, self.args.NUM_TEST_ITER + 1):
             state = self.env.get_state()
             dead = False
             action = self.agent.agent_action(state, 0, dead)
@@ -105,6 +107,9 @@ class SnakeGame:
                     action_best = agent_best.agent_action(state_best, points_best, dead_best)
                 env_best.reset()
                 points_results_best.append(points_best)
+            
+            if i % feedback == 0:
+                print(f'{(i / self.args.NUM_TEST_ITER * 100):.2f}% done')
 
         #UNCOMMENT THE CODE BELOW TO PRINT STATISTICS
         print("Testing takes", time.time() - start, "seconds")
@@ -117,12 +122,13 @@ class SnakeGame:
         avg_best = sum(points_results_best)/len(points_results_best) if not agent_best.Q is None else -float('inf')
         max_best = max(points_results_best) if not agent_best.Q is None else -float('inf')
         min_best = min(points_results_best) if not agent_best.Q is None else -float('inf')
-        print("Average Points Best:", avg_best)
-        print("Max Points Best:", max_best)
-        print("Min Points Best:", min_best)
+        print("Average Points of Current Best:", avg_best)
+        print("Max Points of Current Best:", max_best)
+        print("Min Points of Current Best:", min_best)
         print('==================================')
 
-        if sum(points_results)/len(points_results) > avg_best:
+        if sum(points_results)/len(points_results) > avg_best and min(points_results_best) < min_best:
+            print('New best model! Saving into model_best.npy')
             self.agent.save_best_model()
 
     #   This function is the one where the game will be displayed.

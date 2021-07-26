@@ -32,7 +32,7 @@ NUM_ACTIONS = 4
 
 #   Here we define a bunch of variables that will determine training, testing and displaying the result
 NUM_TRAIN_ITER = 5000
-NUM_TEST_ITER = 500
+NUM_TEST_ITER = 1000
 NUM_DISP_ITER = 5
 NUM_TO_STAT = 1000
 snake_head_x = 200
