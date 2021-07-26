@@ -32,7 +32,7 @@ NUM_ACTIONS = 4
 
 #   Here we define a bunch of variables that will determine training, testing and displaying the result
 NUM_TRAIN_ITER = 5000
-NUM_TEST_ITER = 100
+NUM_TEST_ITER = 500
 NUM_DISP_ITER = 5
 NUM_TO_STAT = 1000
 snake_head_x = 200
@@ -43,6 +43,7 @@ food_y = 120
 
 #   Here we define a varibale to save the trained state.
 MODEL_SAVE_FILE = 'model.npy'
+MODEL_BEST_SAVE_FILE = 'model_best.npy'
 
 #   Here we define a function that checks if the Q array we created is in the proper format
 #   It doesn't check the values in the array, rather it only checks if the array has the
@@ -77,6 +78,14 @@ def save(arr):
 		print("\t********UNABLE TO SAVE MODEL AS FILE********")
 		return False
 
+def save_best(arr):
+	if np_error_checker(arr):
+		np.save(MODEL_BEST_SAVE_FILE,arr)
+		return True
+	else:
+		print("\t********UNABLE TO SAVE MODEL AS FILE********")
+		return False
+
 
 #   Here we define a function to load Q array. We again run a quick formt check after loading
 def load():
@@ -88,6 +97,18 @@ def load():
 		return None
 	except:
 		print("\t********MODEL FILE NAMED " + MODEL_SAVE_FILE + "NOT FOUND")
+		return None
+
+#   Here we define a function to load Q array. We again run a quick formt check after loading
+def load_best():
+	try:
+		arr = np.load(MODEL_BEST_SAVE_FILE)
+		if np_error_checker(arr):
+			print("\t********MODEL IN " + MODEL_BEST_SAVE_FILE + " LOADED")
+			return arr
+		return None
+	except:
+		print("\t********MODEL FILE NAMED " + MODEL_BEST_SAVE_FILE + "NOT FOUND")
 		return None
 
 

@@ -75,7 +75,13 @@ class SnakeGame:
         self.agent.load_model()
         points_results = []
         start = time.time()
-        self.agent.set_eval()
+
+        env_best = BoardEnv(self.args.snake_head_x, self.args.snake_head_y, self.args.food_x, self.args.food_y)
+        agent_best = SnakeAgent(env_best.get_actions(), self.args.Ne, self.args.LPC, self.args.gamma)
+        agent_best.load_best_model()
+        agent_best.set_eval()
+        print(f'agent_best.Q == None == {agent_best.Q == None}')
+        points_results_best = []
 
         for _ in range(1, self.args.NUM_TEST_ITER + 1):
             state = self.env.get_state()
@@ -89,13 +95,37 @@ class SnakeGame:
             self.env.reset()
             points_results.append(points)
 
+            if agent_best.Q != None:
+                print('here')
+                state_best = env_best.get_state()
+                dead_best = False
+                action_best = agent_best.agent_action(state_best, 0, dead_best)
+                count_best = 0
+                while not dead_best:
+                    count_best += 1
+                    state_best, points_best, dead_best = env_best.step(action_best)
+                    action_best = agent_best.agent_action(state_best, points_best, dead_best)
+                env_best.reset()
+                points_results_best.append(points_best)
+
         #UNCOMMENT THE CODE BELOW TO PRINT STATISTICS
         print("Testing takes", time.time() - start, "seconds")
         print("Number of Games:", len(points_results))
+        print('---------------------------------')
         print("Average Points:", sum(points_results)/len(points_results))
         print("Max Points:", max(points_results))
         print("Min Points:", min(points_results))
+        print('---------------------------------')
+        avg_best = sum(points_results_best)/len(points_results_best) if agent_best.Q != None else -float('inf')
+        max_best = max(points_results_best)/len(points_results_best) if agent_best.Q != None else -float('inf')
+        min_best = min(points_results_best)/len(points_results_best) if agent_best.Q != None else -float('inf')
+        print("Average Points Best:", avg_best)
+        print("Max Points Best:", max_best)
+        print("Min Points Best:", min_best)
+        print('==================================')
 
+        if sum(points_results)/len(points_results) > avg_best:
+            self.agent.save_best_model()
 
     #   This function is the one where the game will be displayed.
     #   This function is already written for you. No changes are necessary

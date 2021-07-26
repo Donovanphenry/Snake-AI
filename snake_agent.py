@@ -45,6 +45,13 @@ class SnakeAgent:
     def load_model(self):
         self.Q = helper.load()
 
+    def save_best_model(self):
+        helper.save_best(self.Q)
+
+    def load_best_model(self):
+        self.Q = helper.load_best()
+
+
     #   resets the game state
     def reset(self):
         self.points = 0
