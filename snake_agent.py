@@ -103,13 +103,11 @@ class SnakeAgent:
         return (adj_wall_x, adj_wall_y, food_dir_x, food_dir_y, adj_top, adj_bot, adj_left, adj_right)
 
     # Computing the reward, need not be changed.
-    def compute_reward(self, points, dead, toward_food = False):
+    def compute_reward(self, points, dead):
         if dead:
             return -1
         elif points > self.points:
             return 1
-        # elif toward_food:
-        #     return -0.05
         else:
             return -0.1
 
@@ -175,14 +173,8 @@ class SnakeAgent:
                 successor[1] < helper.BOARD_LIMIT_MIN or\
                 successor[1] > helper.BOARD_LIMIT_MAX:
                 successor_dead = True
-            
-            x1, y1 = state[0] - state[3], state[1] - state[4]
-            x2, y2 = successor[0] - successor[3], successor[1] - successor[4]
-            d1, d2 = math.sqrt(x1 ** 2 + y1 ** 2), math.sqrt(x2 ** 2 + y2 ** 2)
-            towards_food = d2 < d1 
 
-            samples[i] = self.compute_reward(successor_points, successor_dead, toward_food=towards_food)
-            # if not successor_dead:
+            samples[i] = self.compute_reward(successor_points, successor_dead)
             wx1, wy1, fdx1, fdy1, t1, b1, l1, r1 = self.helper_func(successor)
             succ_max = np.max(self.Q[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, :])
             samples[i] += self.gamma * succ_max
@@ -192,7 +184,6 @@ class SnakeAgent:
                 nval_old = self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i]
                 self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i] = (1 - alpha) * nval_old + alpha * samples[i]
                 future[i] = self.N[wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right, i]
-            # print(f'a = {i}, a_primes = {self.Q[wx1, wy1, fdx1, fdy1, t1, b1, l1, r1, :]}')
         
         max_action = np.argmax(future)
 
