@@ -149,7 +149,7 @@ class SnakeAgent:
         wall_x, wall_y, food_dir_x, food_dir_y, top, bot, left, right = self.helper_func(state)
         samples = np.array([-float('inf')] * len(self.actions))
         future = np.array([-float('inf')] * len(self.actions))
-        alpha = .6
+        alpha = .7
 
         for i in self.actions:
             self.N = self.Q.copy()
