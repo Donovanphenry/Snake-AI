@@ -33,7 +33,7 @@ NUM_ACTIONS = 4
 #   Here we define a bunch of variables that will determine training, testing and displaying the result
 NUM_TRAIN_ITER = 5000
 NUM_TEST_ITER = 100
-NUM_DISP_ITER = 1
+NUM_DISP_ITER = 5
 NUM_TO_STAT = 1000
 snake_head_x = 200
 snake_head_y = 200
@@ -103,7 +103,7 @@ def make_args():
     parser.add_argument('--NTEI', dest="NUM_TEST_ITER", type=int, default=NUM_TEST_ITER,
                         help='Number of iterations run when training; set by default as NUM_TEST_ITER=100')
     #   Number of games to display
-    parser.add_argument('--DISP', dest="NUM_DISP_ITER", type=int, default=1,
+    parser.add_argument('--DISP', dest="NUM_DISP_ITER", type=int, default=5,
                         help='Number of runs displayed; set by default as NUM_DISP_ITER=1')
     #   Number of games to average statistics over
     parser.add_argument('--STAT', dest="NUM_TO_STAT", type=int, default=NUM_TO_STAT,

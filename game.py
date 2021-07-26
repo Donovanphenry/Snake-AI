@@ -145,4 +145,3 @@ if __name__ == "__main__":
     print(main_args)
     game1 = SnakeGame(main_args)
     game1.play()
-
