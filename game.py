@@ -110,9 +110,14 @@ class SnakeGame:
             
             if i % feedback == 0:
                 print(f'{(i / self.args.NUM_TEST_ITER * 100):.2f}% done')
+                print("Average Points:", sum(points_results)/len(points_results))
+                avg_best = sum(points_results_best)/len(points_results_best) if not agent_best.Q is None else -float('inf')
+                print("Average Points of Current Best:", avg_best)
+                print('---------------------------------')
 
         #UNCOMMENT THE CODE BELOW TO PRINT STATISTICS
-        print("Testing takes", time.time() - start, "seconds")
+        print(f'100% done')
+        print(f"Testing takes {(time.time() - start):.2f} seconds")
         print("Number of Games:", len(points_results))
         print('---------------------------------')
         print("Average Points:", sum(points_results)/len(points_results))
